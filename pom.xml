@@ -103,7 +103,7 @@
                         <version>3.4.3</version>
                         <configuration>
                             <from>
-                                <image>amazoncoretto:24-alpine</image>
+                                <image>amazoncorretto:24-alpine</image>
                             </from>
                             <to>
                                 <image>${env.DOCKER_REG_URL}/${project.artifactId}</image>
