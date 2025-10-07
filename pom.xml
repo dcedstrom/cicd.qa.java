@@ -29,6 +29,14 @@
     <properties>
         <java.version>21</java.version>
         <kotlin.version>1.9.25</kotlin.version>
+        <aws.accountId>946166969745</aws.accountId>
+        <aws.region>us-west-2</aws.region>
+        <ecr.repo>dce-test-service</ecr.repo>
+        <imageTag>latest</imageTag>
+
+        <codeartifact.url>
+            https://generali-artifacts-946166969745.d.codeartifact.us-west-2.amazonaws.com/maven/java-test/
+        </codeartifact.url>
     </properties>
     <dependencies>
         <dependency>
@@ -126,7 +134,7 @@
                                     <image>amazoncorretto:24-alpine</image>
                                     <platforms>
                                         <platform>
-                                            <architecture>arm64</architecture>
+                                            <architecture>amd64</architecture>
                                             <os>linux</os>
                                         </platform>
                                     </platforms>
@@ -142,24 +150,18 @@
                         <version>3.4.3</version>
                         <configuration>
                             <to>
-                                <image>${env.DOCKER_REG_URL}/${project.artifactId}</image>
-                                <auth>
-                                    <username>${env.DOCKER_AUTH_USER}</username>
-                                    <password>${env.DOCKER_AUTH_PASS}</password>
-                                </auth>
+                                <image>${aws.accountId}.dkr.ecr.${aws.region}.amazonaws.com/${ecr.repo}</image>
                                 <tags>
                                     <tag>latest</tag>
                                     <tag>${project.version}</tag>
                                 </tags>
+                                <credHelper>ecr-login</credHelper>
                             </to>
                             <container>
                                 <mainClass>io.venerated.cicd.qa.java.ApplicationKt</mainClass>
                                 <ports>
                                     <port>8080</port>
                                 </ports>
-                                <labels>
-                                    <org.opencontainers.image.source>https://github.com/dcedstrom/REPO</org.opencontainers.image.source>
-                                </labels>
                             </container>
                         </configuration>
                     </plugin>
@@ -190,7 +192,7 @@
         <repository>
             <id>ven-artifacts-maven-internal</id>
             <name>ven-artifacts-maven-internal</name>
-            <url>https://ven-artifacts-495599744457.d.codeartifact.us-east-2.amazonaws.com/maven/maven-internal/</url>
+            <url>${codeartifact.url}</url>
         </repository>
     </distributionManagement>
 </project>
