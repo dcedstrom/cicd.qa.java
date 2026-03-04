@@ -138,7 +138,7 @@
     </build>
     <profiles>
         <profile>
-            <id>jib-ghcr</id>
+            <id>docker</id>
             <activation>
                 <activeByDefault>false</activeByDefault>
             </activation>
@@ -157,6 +157,7 @@
                                         <goal>dockerBuild</goal>
                                     </goals>
                                 </execution>
+                                <!-- This is the key: Jib push anchored to DEPLOY -->
                                 <execution>
                                     <id>remoteDocker</id>
                                     <phase>deploy</phase>
@@ -182,13 +183,15 @@
                         </plugin>
                     </plugins>
                 </pluginManagement>
+
                 <plugins>
+                    <!-- Jib plugin declared here (like Generali structure) -->
                     <plugin>
                         <groupId>com.google.cloud.tools</groupId>
                         <artifactId>jib-maven-plugin</artifactId>
-                        <version>3.4.3</version>
                         <configuration>
                             <to>
+                                <!-- mimic “static-ish” image string, but still sandbox-friendly -->
                                 <image>${env.DOCKER_REG_URL}/${project.artifactId}</image>
                                 <auth>
                                     <username>${env.DOCKER_AUTH_USER}</username>
@@ -197,21 +200,20 @@
                                 <tags>
                                     <tag>latest</tag>
                                     <tag>${project.version}</tag>
+                                    <!-- mimic your prod pattern where a placeholder gets replaced -->
+                                    <tag>${env.JIB_EXTRA_TAG}</tag>
                                 </tags>
                             </to>
+
                             <container>
                                 <mainClass>io.venerated.cicd.qa.java.ApplicationKt</mainClass>
                                 <ports>
                                     <port>8080</port>
                                 </ports>
-                                <labels>
-                                    <org.opencontainers.image.source>https://github.com/dcedstrom/REPO</org.opencontainers.image.source>
-                                </labels>
                             </container>
                         </configuration>
                     </plugin>
-
-                    <!-- Optional echo -->
+                    <!-- Optional echo to confirm profile -->
                     <plugin>
                         <artifactId>maven-antrun-plugin</artifactId>
                         <version>1.8</version>
@@ -220,7 +222,7 @@
                                 <phase>validate</phase>
                                 <configuration>
                                     <tasks>
-                                        <echo message="Jib GHCR profile is active."/>
+                                        <echo message="Docker profile is active; Jib remoteDocker is bound to deploy."/>
                                     </tasks>
                                 </configuration>
                                 <goals>
